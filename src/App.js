@@ -42,11 +42,11 @@ class App extends Component {
 
   render() {
     const { token, storage, loadingStorage } = this.state;
-  
+    
     if (loadingStorage) {
       return <div>Loading...</div>;
     }
-  
+    
     return (
       <Router>
         <div>
