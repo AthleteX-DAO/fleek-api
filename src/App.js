@@ -6,7 +6,7 @@ import AthleteDetail from './AthleteDetail';
 
 class App extends Component {
   state = {
-    // TODO: add token
+    token: process.env.TOKEN,
     athletes: [],
     loadingStorage: true
   }
