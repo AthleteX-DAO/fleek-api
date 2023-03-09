@@ -6,7 +6,7 @@ import AthleteDetail from './AthleteDetail';
 
 class App extends Component {
   state = {
-    token: process.env.TOKEN,
+    token: process.env.REACT_APP_TOKEN,
     athletes: [],
     loadingStorage: true
   }
@@ -26,13 +26,14 @@ class App extends Component {
       'https://api.nft.storage/',
       token,
     );
+
     const storage_directories = file_list_request.value;
     localStorage.setItem('storage', JSON.stringify(storage_directories));
     this.setState({ storage: storage_directories, loadingStorage: false });
   }
 
   async getResponse(url, token) {
-    const response = await axios.get(`https://cors-anywhere.herokuapp.com/${url}`, {
+    const response = await axios.get(url, {
       headers: {
         Authorization: token,
       },
@@ -46,7 +47,7 @@ class App extends Component {
     if (loadingStorage) {
       return <div>Loading...</div>;
     }
-    
+
     return (
       <Router>
         <div>
