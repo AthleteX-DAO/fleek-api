@@ -6,7 +6,7 @@ import AthleteDetail from './AthleteDetail';
 
 class App extends Component {
   state = {
-    token: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGQ1ODQ3Yjk1Qjc4NDA2ODcyRGEwODA0ZjY5MDhmNTNlNEQ4MTQ0ZmQiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY3ODIzMDI2NzU2NSwibmFtZSI6Ik5GVF9QUk9EIn0.TEz6TsKx4lNZGfirumOimOWoc_G1neOgUMt-ttyRUtQ',
+    // TODO: add token
     athletes: [],
     loadingStorage: true
   }
