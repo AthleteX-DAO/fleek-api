@@ -10,7 +10,8 @@ async function fetchDesiredAthleteList(directory, token) {
 }
 
 async function getResponse(url, token) {
-  const response = await axios.get(`https://cors-anywhere.herokuapp.com/${url}`, {
+  // const response = await axios.get(`https://cors-anywhere.herokuapp.com/${url}`, {
+  const response = await axios.get(url, {
     headers: {
       Authorization: token,
     },

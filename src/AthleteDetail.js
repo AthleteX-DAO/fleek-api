@@ -14,13 +14,14 @@ async function fetchFile(directory, fileName, token) {
 }
 
 async function getResponse(url, token) {
-    const response = await axios.get(`https://cors-anywhere.herokuapp.com/${url}`, {
-        headers: {
-            Authorization: token,
-        },
+    // const response = await axios.get(`https://cors-anywhere.herokuapp.com/${url}`, {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: token,
+      },
     });
     return response.data;
-}
+  }
 
 function AthleteDetail({ storage, token }) {
     const [athleteFile, setAthleteFile] = useState(null);

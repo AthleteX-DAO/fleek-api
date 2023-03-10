@@ -33,11 +33,13 @@ class App extends Component {
   }
 
   async getResponse(url, token) {
-    const response = await axios.get(url, {
-      headers: {
-        Authorization: token,
-      },
-    });
+    const response = await axios.get(
+      url,
+      {
+        headers: {
+          Authorization: token,
+        },
+      });
     return response.data;
   }
 
