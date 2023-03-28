@@ -63,7 +63,6 @@ function Home({ urls }) {
   );
 }
 
-
 function GETContent({ url }) {
   const [content, setContent] = useState('');
 
