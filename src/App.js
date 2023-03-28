@@ -1,67 +1,108 @@
-import React, { Component } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, useParams } from 'react-router-dom';
 import axios from 'axios';
-import AthleteList from './AthleteList';
-import AthleteDetail from './AthleteDetail';
 
-class App extends Component {
-  state = {
-    token: process.env.REACT_APP_TOKEN,
-    athletes: [],
-    loadingStorage: true
-  }
+function App() {
+  const [nflUrls, setNflUrls] = useState([]);
 
-  componentDidMount() {
-    const storage = localStorage.getItem('storage');
-    if (storage) {
-      this.setState({ storage: JSON.parse(storage), loadingStorage: false });
-    } else {
-      this.fetchStorage();
-    }
-  }
-
-  async fetchStorage() {
-    const { token } = this.state;
-    const file_list_request = await this.getResponse(
-      'https://api.nft.storage/',
-      token,
-    );
-
-    const storage_directories = file_list_request.value;
-    localStorage.setItem('storage', JSON.stringify(storage_directories));
-    this.setState({ storage: storage_directories, loadingStorage: false });
-  }
-
-  async getResponse(url, token) {
-    const response = await axios.get(
-      url,
-      {
-        headers: {
-          Authorization: token,
-        },
-      });
-    return response.data;
-  }
-
-  render() {
-    const { token, storage, loadingStorage } = this.state;
+  useEffect(() => {
+    async function getNFLTargets() {
+      if (nflUrls.length > 0) {
+        return;
+      }
+      let nfl_urls = [];
+      const token = process.env.REACT_APP_NFL_TOKEN;
+      const response = await axios.get(
+        'https://api.nft.storage/', {
+          headers: {
+            Authorization: token,
+          },
+        });
+      const data = response.data.value;
     
-    if (loadingStorage) {
-      return <div>Loading...</div>;
+      if (data[0].size < data[1].size) {
+        nfl_urls.push(`https://${data[0].cid}.ipfs.nftstorage.link`);
+        nfl_urls.push(`https://${data[1].cid}.ipfs.nftstorage.link`);
+        setNflUrls(nfl_urls);
+        return;
+      }
+    
+      nfl_urls.push(`https://${data[1].cid}.ipfs.nftstorage.link`);
+      nfl_urls.push(`https://${data[0].cid}.ipfs.nftstorage.link`);
+      setNflUrls(nfl_urls);
     }
 
-    return (
-      <Router>
-        <div>
-          <Routes>
-            <Route exact path="/" element={<AthleteList storage={storage} token={token} />} />
-            <Route path="/:number" element={<AthleteDetail storage={storage} token={token} />} />
-          </Routes>
-        </div>
-      </Router>
-    );
-  }
-  
+    getNFLTargets();
+  }, []);
+
+  return (
+    <Router>
+      <div>
+        <Routes>
+          <Route path="/" element={<Home urls={nflUrls} />} />
+          <Route path="/nfl" element={<GETContent url={nflUrls[0]} />} />
+          <Route path="/nfl/:id" element={<GETSubContent url={nflUrls[1]} />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+}
+
+function Home({ urls }) {
+  return (
+    <div>
+      <h1>The following sports are currently available: NFL</h1>
+      {urls.length === 0
+        ? <p>NFL: Loading...</p>
+        : <div>
+            <p>NFL: Done</p>
+            <p>{urls[0]}</p>
+            <p>{urls[1]}</p>
+          </div>}
+    </div>
+  );
+}
+
+
+function GETContent({ url }) {
+  const [content, setContent] = useState('');
+
+  useEffect(() => {
+    async function getContent() {
+      if (!url) {
+        return;
+      }
+      const response = await axios.get(url);
+      setContent(JSON.stringify(response.data));
+    }
+
+    getContent();
+  }, [url]);
+
+  return (
+      <div dangerouslySetInnerHTML={{ __html: content }}></div>
+  );
+}
+
+function GETSubContent({ url }) {
+  const [content, setUrlContent] = useState('');
+  const { id } = useParams();
+
+  useEffect(() => {
+    async function getUrlContent() {
+      if (!url) {
+        return;
+      }
+      const response = await axios.get(`${url}/${id}`);
+      setUrlContent(JSON.stringify(response.data));
+    }
+
+    getUrlContent();
+  }, [url, id]);
+
+  return (
+    <div dangerouslySetInnerHTML={{ __html: content }}></div>
+  );
 }
 
 export default App;
