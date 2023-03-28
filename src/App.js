@@ -68,13 +68,16 @@ function GETContent({ url }) {
 
   useEffect(() => {
     async function getContent() {
+      console.log(`URL: ${url}`);
       if (!url) {
         return;
       }
       const response = await axios.get(url);
       setContent(JSON.stringify(response.data));
+      console.log(await JSON.stringify(response.data));
     }
 
+    console.log("start GET");
     getContent();
   }, [url]);
 
@@ -89,13 +92,16 @@ function GETSubContent({ url }) {
 
   useEffect(() => {
     async function getUrlContent() {
+      console.log(`URL: ${url}`);
       if (!url) {
         return;
       }
       const response = await axios.get(`${url}/${id}`);
       setUrlContent(JSON.stringify(response.data));
+      console.log(await JSON.stringify(response.data));
     }
 
+    console.log("start GET");
     getUrlContent();
   }, [url, id]);
 
