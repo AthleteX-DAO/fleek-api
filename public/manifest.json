@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "API",
+  "name": "AX IPFS API",
   "icons": [],
   "start_url": ".",
   "display": "standalone",

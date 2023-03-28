@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, useParams } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes, useParams } from 'react-router-dom';
 import axios from 'axios';
 
 function App() {
@@ -7,9 +7,6 @@ function App() {
 
   useEffect(() => {
     async function getNFLTargets() {
-      if (nflUrls.length > 0) {
-        return;
-      }
       let nfl_urls = [];
       const token = process.env.REACT_APP_NFL_TOKEN;
       const response = await axios.get(
@@ -56,6 +53,7 @@ function Home({ urls }) {
         ? <p>NFL: Loading...</p>
         : <div>
             <p>NFL: Done</p>
+            <p>To route, first use '/#/' followed by the sport, then you can subroute further into any of those players</p>
             <p>{urls[0]}</p>
             <p>{urls[1]}</p>
           </div>}
@@ -68,16 +66,13 @@ function GETContent({ url }) {
 
   useEffect(() => {
     async function getContent() {
-      console.log(`URL: ${url}`);
       if (!url) {
         return;
       }
       const response = await axios.get(url);
       setContent(JSON.stringify(response.data));
-      console.log(await JSON.stringify(response.data));
     }
 
-    console.log("start GET");
     getContent();
   }, [url]);
 
@@ -92,16 +87,13 @@ function GETSubContent({ url }) {
 
   useEffect(() => {
     async function getUrlContent() {
-      console.log(`URL: ${url}`);
       if (!url) {
         return;
       }
       const response = await axios.get(`${url}/${id}`);
       setUrlContent(JSON.stringify(response.data));
-      console.log(await JSON.stringify(response.data));
     }
 
-    console.log("start GET");
     getUrlContent();
   }, [url, id]);
 
