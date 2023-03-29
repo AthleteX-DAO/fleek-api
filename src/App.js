@@ -3,30 +3,21 @@ import { HashRouter as Router, Route, Routes, useParams } from 'react-router-dom
 import axios from 'axios';
 
 function App() {
-  const [nflUrls, setNflUrls] = useState([]);
+  const [nflList, setNflList] = useState('');
+  const [nflPlayers, setNflPlayers] = useState('');
 
   useEffect(() => {
     async function getNFLTargets() {
-      let nfl_urls = [];
-      const token = process.env.REACT_APP_NFL_TOKEN;
-      const response = await axios.get(
-        'https://api.nft.storage/', {
-          headers: {
-            Authorization: token,
-          },
-        });
-      const data = response.data.value;
-    
-      if (data[0].size < data[1].size) {
-        nfl_urls.push(`https://${data[0].cid}.ipfs.nftstorage.link`);
-        nfl_urls.push(`https://${data[1].cid}.ipfs.nftstorage.link`);
-        setNflUrls(nfl_urls);
-        return;
+      try {
+        let nfl_urls = [];
+        const token = process.env.REACT_APP_NFL_TOKEN;
+        const response = await axios.get('https://raw.githubusercontent.com/AthleteX-DAO/sports-cids/main/nfl.json');
+        const { list, directory } = response.data;
+        setNflList(`https://${list}.ipfs.nftstorage.link`);
+        setNflPlayers(`https://${directory}.ipfs.nftstorage.link`);
+      } catch (error) {
+        console.error(error);
       }
-    
-      nfl_urls.push(`https://${data[1].cid}.ipfs.nftstorage.link`);
-      nfl_urls.push(`https://${data[0].cid}.ipfs.nftstorage.link`);
-      setNflUrls(nfl_urls);
     }
 
     getNFLTargets();
@@ -36,9 +27,9 @@ function App() {
     <Router>
       <div>
         <Routes>
-          <Route path="/" element={<Home urls={nflUrls} />} />
-          <Route path="/nfl" element={<GETContent url={nflUrls[0]} />} />
-          <Route path="/nfl/:id" element={<GETSubContent url={nflUrls[1]} />} />
+          <Route path="/" element={<Home urls={[nflList, nflPlayers]} />} />
+          <Route path="/nfl" element={<GETContent url={nflList} />} />
+          <Route path="/nfl/:id" element={<GETSubContent url={nflPlayers} />} />
         </Routes>
       </div>
     </Router>
@@ -46,16 +37,17 @@ function App() {
 }
 
 function Home({ urls }) {
+  const [list, dir] = urls;
   return (
     <div>
       <h1>The following sports are currently available: NFL</h1>
-      {urls.length === 0
+      {(list === '' && dir === '')
         ? <p>NFL: Loading...</p>
         : <div>
             <p>NFL: Done</p>
             <p>To route, first use '/#/' followed by the sport, then you can subroute further into any of those players</p>
-            <p>{urls[0]}</p>
-            <p>{urls[1]}</p>
+            <p>{list}</p>
+            <p>{dir}</p>
           </div>}
     </div>
   );
